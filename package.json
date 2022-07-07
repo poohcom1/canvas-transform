@@ -1,0 +1,23 @@
+{
+  "name": "canvas-transform",
+  "version": "0.0.1",
+  "description": "A wrapper for HTML canvas context for easy zooming/panning/translating",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "test"
+  },
+  "keywords": [
+    "canvas",
+    "html5",
+    "zoom",
+    "pan",
+    "translate"
+  ],
+  "author": "poohcom1",
+  "license": "MIT"
+}

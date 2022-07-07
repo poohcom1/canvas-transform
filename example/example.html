@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <canvas></canvas>
+    <script src="index.js" type="text/javascript"></script>
+    <script defer>
+      var canvas = document.getElementsByTagName("canvas")[0];
+      canvas.width = 800;
+      canvas.height = 600;
+      var gkhead = new Image();
+      var ball = new Image();
+
+      function draw(ctx) {
+        // Clear the entire canvas
+        var p1 = ctx.transformedPoint(0, 0);
+        var p2 = ctx.transformedPoint(canvas.width, canvas.height);
+        ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+
+        ctx.fillRect(0, 0, 10, 10);
+      }
+
+      window.onload = function () {
+        getTransformContext(canvas)(draw);
+      };
+      gkhead.src = "http://phrogz.net/tmp/gkhead.jpg";
+      ball.src = "http://phrogz.net/tmp/alphaball.png";
+    </script>
+  </body>
+</html>
