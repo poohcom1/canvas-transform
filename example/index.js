@@ -44,7 +44,8 @@ function trackTransforms(ctx) {
     };
     let setTransform = ctx.setTransform;
     ctx.setTransform = function (a, b, c, d, e, f) {
-        xform.a = a;
+        if (typeof a === "number")
+            xform.a = a;
         xform.b = b;
         xform.c = c;
         xform.d = d;
@@ -58,9 +59,6 @@ function trackTransforms(ctx) {
         pt.y = y;
         return pt.matrixTransform(xform.inverse());
     };
-    ctx.draw = function (callback) {
-        callback(ctx);
-    };
     return ctx;
 }
 function getTransformContext(canvas) {
@@ -70,7 +68,6 @@ function getTransformContext(canvas) {
     function draw(_callback) {
         callback = _callback;
         callback(ctx);
-        console.log(_callback.toString());
     }
     let lastX = canvas.width / 2, lastY = canvas.height / 2;
     let dragStart, dragged;

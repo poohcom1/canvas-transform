@@ -4,7 +4,7 @@ interface TransformCanvasRenderingContext2D extends CanvasRenderingContext2D {
 }
 
 export function trackTransforms(
-  ctx: CanvasRenderingContext2D | any
+  ctx: CanvasRenderingContext2D
 ): TransformCanvasRenderingContext2D {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   let xform = svg.createSVGMatrix();
@@ -57,8 +57,15 @@ export function trackTransforms(
   };
 
   let setTransform = ctx.setTransform;
-  ctx.setTransform = function (a, b, c, d, e, f) {
-    xform.a = a;
+  (ctx as TransformCanvasRenderingContext2D).setTransform = function (
+    a: number | DOMMatrix2DInit,
+    b?: number,
+    c?: number,
+    d?: number,
+    e?: number,
+    f?: number
+  ) {
+    if (typeof a === "number") xform.a = a;
     xform.b = b;
     xform.c = c;
     xform.d = d;
@@ -67,17 +74,16 @@ export function trackTransforms(
     return setTransform.call(ctx, a, b, c, d, e, f);
   };
   let pt = svg.createSVGPoint();
-  ctx.transformedPoint = function (x, y) {
+  (ctx as TransformCanvasRenderingContext2D).transformedPoint = function (
+    x,
+    y
+  ) {
     pt.x = x;
     pt.y = y;
     return pt.matrixTransform(xform.inverse());
   };
 
-  ctx.draw = function (callback) {
-    callback(ctx);
-  };
-
-  return ctx;
+  return ctx as TransformCanvasRenderingContext2D;
 }
 
 export function getTransformContext(
