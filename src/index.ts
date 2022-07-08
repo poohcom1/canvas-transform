@@ -1,49 +1,102 @@
-interface TransformCanvasRenderingContext2D extends CanvasRenderingContext2D {
+export interface TransformCanvasRenderingContext2D
+  extends CanvasRenderingContext2D {
   getTransform(): SVGMatrix;
   transformedPoint(x: number, y: number): SVGPoint;
+  clearCanvas(): void;
+
+  // Transform functions
+
+  /**
+   * Marks the start of a canvas drag.
+   * Should be used on the onmousedown event
+   * @param e
+   */
+  beginDrag(e: MouseEvent): void;
+  /**
+   * Drags the canvas.
+   * Should be used on the onmousemove event
+   * @param e
+   */
+  drag(e: MouseEvent): void;
+  /**
+   * Ends the canvas draw.
+   * Should be used on the onmousemove event
+   * @param e
+   */
+  endDrag(e: MouseEvent): void;
+
+  /**
+   * Zooms in or out
+   * @param amount Amount in integers to zoom by. Applies zoom on top of previous zoom
+   * @param factor Zoom factor. Defaults to 1.1
+   * @param center The center to zoom to. If undefined, will zoom to the last mouse pos in endDraw
+   */
+  zoom(
+    amount: number,
+    factor?: number,
+    center?: { x: number; y: number }
+  ): number;
 }
 
-export function trackTransforms(
+/**
+ * Type guard for transformed context
+ * @param ctx
+ * @returns
+ */
+export function isTransformedContext(
+  ctx: CanvasRenderingContext2D
+): ctx is TransformCanvasRenderingContext2D {
+  return (
+    "zoom" in ctx && "beginDrag" in ctx && "drag" in ctx && "endDrag" in ctx
+  );
+}
+
+/**
+ * Extends a canvas context IN PLACE.
+ * The return value is for type change typescript usage
+ * @param ctx
+ * @returns The canvas context.
+ */
+export function toTransformedContext(
   ctx: CanvasRenderingContext2D
 ): TransformCanvasRenderingContext2D {
+  if (isTransformedContext(ctx)) {
+    console.warn("[canvas-transform] Canvas is already a transformed canvas!");
+    return ctx;
+  }
+
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   let xform = svg.createSVGMatrix();
   ctx.getTransform = function () {
     return xform;
   };
 
-  const savedTransforms = [];
-  const save = ctx.save;
+  const savedTransforms: DOMMatrix[] = [];
   ctx.save = function () {
     savedTransforms.push(xform.translate(0, 0));
-    return save.call(ctx);
+    return CanvasRenderingContext2D.prototype.save.call(ctx);
   };
 
-  const restore = ctx.restore;
   ctx.restore = function () {
-    xform = savedTransforms.pop();
-    return restore.call(ctx);
+    xform = savedTransforms.pop()!;
+    return CanvasRenderingContext2D.prototype.restore.call(ctx);
   };
 
-  let scale = ctx.scale;
   ctx.scale = function (sx, sy) {
-    xform = xform.scaleNonUniform(sx, sy);
-    return scale.call(ctx, sx, sy);
+    xform = xform.scale(sx, sy);
+    return CanvasRenderingContext2D.prototype.scale.call(ctx, sx, sy);
   };
 
-  let rotate = ctx.rotate;
   ctx.rotate = function (radians) {
     xform = xform.rotate((radians * 180) / Math.PI);
-    return rotate.call(ctx, radians);
+    return CanvasRenderingContext2D.prototype.rotate.call(ctx, radians);
   };
 
-  let translate = ctx.translate;
   ctx.translate = function (dx, dy) {
     xform = xform.translate(dx, dy);
-    return translate.call(ctx, dx, dy);
+    return CanvasRenderingContext2D.prototype.translate.call(ctx, dx, dy);
   };
 
-  let transform = ctx.transform;
   ctx.transform = function (a, b, c, d, e, f) {
     let m2 = svg.createSVGMatrix();
     m2.a = a;
@@ -53,11 +106,18 @@ export function trackTransforms(
     m2.e = e;
     m2.f = f;
     xform = xform.multiply(m2);
-    return transform.call(ctx, a, b, c, d, e, f);
+    return CanvasRenderingContext2D.prototype.transform.call(
+      ctx,
+      a,
+      b,
+      c,
+      d,
+      e,
+      f
+    );
   };
 
-  let setTransform = ctx.setTransform;
-  (ctx as TransformCanvasRenderingContext2D).setTransform = function (
+  ctx.setTransform = function (
     a: number | DOMMatrix2DInit,
     b?: number,
     c?: number,
@@ -65,15 +125,30 @@ export function trackTransforms(
     e?: number,
     f?: number
   ) {
-    if (typeof a === "number") xform.a = a;
-    xform.b = b;
-    xform.c = c;
-    xform.d = d;
-    xform.e = e;
-    xform.f = f;
-    return setTransform.call(ctx, a, b, c, d, e, f);
+    if (typeof a === "number") {
+      xform.a = a;
+      xform.b = b;
+      xform.c = c;
+      xform.d = d;
+      xform.e = e;
+      xform.f = f;
+      return CanvasRenderingContext2D.prototype.setTransform.call(
+        ctx,
+        a,
+        b,
+        c,
+        d,
+        e,
+        f
+      );
+    } else {
+      return CanvasRenderingContext2D.prototype.setTransform.call(ctx, a);
+    }
   };
+
+  // Extensions
   let pt = svg.createSVGPoint();
+
   (ctx as TransformCanvasRenderingContext2D).transformedPoint = function (
     x,
     y
@@ -83,85 +158,58 @@ export function trackTransforms(
     return pt.matrixTransform(xform.inverse());
   };
 
+  let lastX = 0,
+    lastY = 0,
+    dragged = false,
+    dragStart: DOMPoint | undefined = undefined;
+
+  (ctx as TransformCanvasRenderingContext2D).clearCanvas = function () {
+    var p1 = this.transformedPoint(0, 0);
+    var p2 = this.transformedPoint(this.canvas.width, this.canvas.height);
+    this.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+  };
+
+  (ctx as TransformCanvasRenderingContext2D).beginDrag = function (e) {
+    lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
+    lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
+    dragStart = this.transformedPoint(lastX, lastY);
+    dragged = false;
+  };
+
+  (ctx as TransformCanvasRenderingContext2D).drag = function (e) {
+    lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
+    lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
+    dragged = true;
+    if (dragStart) {
+      let pt = this.transformedPoint(lastX, lastY);
+      this.translate(pt.x - dragStart.x, pt.y - dragStart.y);
+    }
+  };
+
+  (ctx as TransformCanvasRenderingContext2D).endDrag = function () {
+    dragStart = null;
+  };
+
+  let zoom = 0;
+
+  (ctx as TransformCanvasRenderingContext2D).zoom = function (
+    amount,
+    zoomFactor = 1.1,
+    center?: { x: number; y: number }
+  ) {
+    let pt = center
+      ? this.transform(center.x, center.y)
+      : this.transformedPoint(lastX, lastY);
+
+    zoom + amount;
+
+    this.translate(pt.x, pt.y);
+    const factor = Math.pow(zoomFactor, amount);
+    this.scale(factor, factor);
+    this.translate(-pt.x, -pt.y);
+
+    return zoom;
+  };
+
   return ctx as TransformCanvasRenderingContext2D;
-}
-
-export function getTransformContext(
-  canvas: HTMLCanvasElement
-): (callback: (ctx: TransformCanvasRenderingContext2D) => void) => void {
-  let ctx = canvas.getContext("2d") as TransformCanvasRenderingContext2D;
-  trackTransforms(ctx);
-
-  let callback = (ctx) => undefined;
-
-  function draw(_callback) {
-    callback = _callback;
-    callback(ctx);
-  }
-
-  let lastX = canvas.width / 2,
-    lastY = canvas.height / 2;
-  let dragStart, dragged;
-  canvas.addEventListener(
-    "mousedown",
-    function (evt) {
-      // @ts-ignore
-      document.body.style.mozUserSelect =
-        document.body.style.webkitUserSelect =
-        document.body.style.userSelect =
-          "none";
-      lastX = evt.offsetX || evt.pageX - canvas.offsetLeft;
-      lastY = evt.offsetY || evt.pageY - canvas.offsetTop;
-      dragStart = ctx.transformedPoint(lastX, lastY);
-      dragged = false;
-    },
-    false
-  );
-  canvas.addEventListener(
-    "mousemove",
-    function (evt) {
-      lastX = evt.offsetX || evt.pageX - canvas.offsetLeft;
-      lastY = evt.offsetY || evt.pageY - canvas.offsetTop;
-      dragged = true;
-      if (dragStart) {
-        let pt = ctx.transformedPoint(lastX, lastY);
-        ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y);
-        callback(ctx);
-      }
-    },
-    false
-  );
-  canvas.addEventListener(
-    "mouseup",
-    function (evt) {
-      dragStart = null;
-      if (!dragged) zoom(evt.shiftKey ? -1 : 1);
-    },
-    false
-  );
-
-  let scaleFactor = 1.1;
-  let zoom = function (clicks) {
-    let pt = ctx.transformedPoint(lastX, lastY);
-    ctx.translate(pt.x, pt.y);
-    let factor = Math.pow(scaleFactor, clicks);
-    ctx.scale(factor, factor);
-    ctx.translate(-pt.x, -pt.y);
-    callback(ctx);
-  };
-
-  let handleScroll = function (evt) {
-    let delta = evt.wheelDelta
-      ? evt.wheelDelta / 40
-      : evt.detail
-      ? -evt.detail
-      : 0;
-    if (delta) zoom(delta);
-    return evt.preventDefault() && false;
-  };
-  canvas.addEventListener("DOMMouseScroll", handleScroll, false);
-  canvas.addEventListener("mousewheel", handleScroll, false);
-
-  draw.bind(this);
-  return draw;
 }
