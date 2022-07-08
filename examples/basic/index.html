@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>Canvas transform context</h1>
+    <p>
+      Based on
+      <a href="http://phrogz.net/tmp/canvas_zoom_to_cursor.html"
+        >phrogz.net/tmp/canvas_zoom_to_cursor.html</a
+      >
+    </p>
+    <ul>
+      <li>Click and drag to pan</li>
+      <li>Scroll to zoom</li>
+    </ul>
+    <canvas style="border: 1px solid black"></canvas>
+    <script type="module">
+      import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.1.0/dist/index.min.js";
+
+      var canvas = document.getElementsByTagName("canvas")[0];
+      canvas.width = 800;
+      canvas.height = 600;
+
+      const catImage = new Image();
+      catImage.src = "./cat.jpg";
+
+      function draw(ctx) {
+        // Custom canvas clear method
+        ctx.clearCanvas();
+
+        ctx.drawImage(catImage, 0, 0);
+      }
+
+      window.onload = function () {
+        const ctx = toTransformedContext(canvas.getContext("2d"));
+        draw(ctx);
+
+        // Mouse dragging
+        canvas.addEventListener("mousedown", (e) => {
+          ctx.beginPan(e);
+          draw(ctx);
+        });
+        canvas.addEventListener("mousemove", (e) => {
+          ctx.pan(e);
+          draw(ctx);
+        });
+        canvas.addEventListener("mouseup", (e) => {
+          ctx.endPan(e);
+          draw(ctx);
+        });
+
+        // Wheel zooming
+        canvas.addEventListener("wheel", (e) => {
+          ctx.zoom(-Math.sign(e.deltaY));
+          draw(ctx);
+        });
+      };
+    </script>
+  </body>
+</html>

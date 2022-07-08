@@ -1,7 +1,7 @@
 export interface TransformCanvasRenderingContext2D
   extends CanvasRenderingContext2D {
   getTransform(): SVGMatrix;
-  transformedPoint(x: number, y: number): SVGPoint;
+  transformedPoint(x: number, y: number): DOMPoint;
   clearCanvas(): void;
 
   // Transform functions
@@ -11,19 +11,19 @@ export interface TransformCanvasRenderingContext2D
    * Should be used on the onmousedown event
    * @param e
    */
-  beginDrag(e: MouseEvent): void;
+  beginPan(e: MouseEvent): void;
   /**
    * Drags the canvas.
    * Should be used on the onmousemove event
    * @param e
    */
-  drag(e: MouseEvent): void;
+  pan(e: MouseEvent): void;
   /**
    * Ends the canvas draw.
    * Should be used on the onmousemove event
    * @param e
    */
-  endDrag(e: MouseEvent): void;
+  endPan(e: MouseEvent): void;
 
   /**
    * Zooms in or out
@@ -46,9 +46,7 @@ export interface TransformCanvasRenderingContext2D
 export function isTransformedContext(
   ctx: CanvasRenderingContext2D
 ): ctx is TransformCanvasRenderingContext2D {
-  return (
-    "zoom" in ctx && "beginDrag" in ctx && "drag" in ctx && "endDrag" in ctx
-  );
+  return "zoom" in ctx && "beginPan" in ctx && "pan" in ctx && "endPan" in ctx;
 }
 
 /**
@@ -169,14 +167,14 @@ export function toTransformedContext(
     this.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
   };
 
-  (ctx as TransformCanvasRenderingContext2D).beginDrag = function (e) {
+  (ctx as TransformCanvasRenderingContext2D).beginPan = function (e) {
     lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
     lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
     dragStart = this.transformedPoint(lastX, lastY);
     dragged = false;
   };
 
-  (ctx as TransformCanvasRenderingContext2D).drag = function (e) {
+  (ctx as TransformCanvasRenderingContext2D).pan = function (e) {
     lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
     lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
     dragged = true;
@@ -186,7 +184,7 @@ export function toTransformedContext(
     }
   };
 
-  (ctx as TransformCanvasRenderingContext2D).endDrag = function () {
+  (ctx as TransformCanvasRenderingContext2D).endPan = function () {
     dragStart = null;
   };
 

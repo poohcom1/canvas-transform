@@ -1,11 +1,12 @@
 {
   "name": "canvas-transform-context",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A wrapper for HTML canvas context for easy zooming/panning/translating",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && uglifyjs --compress --mangle -o ./dist/index.min.js -- ./dist/index.js",
+    "deploy": "node deploy-pages.js",
     "test": "jest --env=jsdom"
   },
   "repository": {
@@ -20,5 +21,10 @@
     "translate"
   ],
   "author": "poohcom1",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^4.0.0",
+    "tsc": "^2.0.4",
+    "uglifyjs": "^2.4.11"
+  }
 }
