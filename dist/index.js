@@ -4,7 +4,7 @@
  * @returns
  */
 export function isTransformedContext(ctx) {
-    return ("zoom" in ctx && "beginDrag" in ctx && "drag" in ctx && "endDrag" in ctx);
+    return "zoom" in ctx && "beginPan" in ctx && "pan" in ctx && "endPan" in ctx;
 }
 /**
  * Extends a canvas context IN PLACE.
@@ -81,13 +81,13 @@ export function toTransformedContext(ctx) {
         var p2 = this.transformedPoint(this.canvas.width, this.canvas.height);
         this.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
     };
-    ctx.beginDrag = function (e) {
+    ctx.beginPan = function (e) {
         lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
         lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
         dragStart = this.transformedPoint(lastX, lastY);
         dragged = false;
     };
-    ctx.drag = function (e) {
+    ctx.pan = function (e) {
         lastX = e.offsetX || e.pageX - ctx.canvas.offsetLeft;
         lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
         dragged = true;
@@ -96,7 +96,7 @@ export function toTransformedContext(ctx) {
             this.translate(pt.x - dragStart.x, pt.y - dragStart.y);
         }
     };
-    ctx.endDrag = function () {
+    ctx.endPan = function () {
         dragStart = null;
     };
     let zoom = 0;

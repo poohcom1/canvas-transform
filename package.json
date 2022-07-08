@@ -1,6 +1,6 @@
 {
   "name": "canvas-transform-context",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A wrapper for HTML canvas context for easy zooming/panning/translating",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "gh-pages": "^4.0.0",
     "tsc": "^2.0.4",
+    "typescript": "^4.7.4",
     "uglifyjs": "^2.4.11"
   }
 }

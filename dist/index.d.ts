@@ -1,25 +1,25 @@
 export interface TransformCanvasRenderingContext2D extends CanvasRenderingContext2D {
     getTransform(): SVGMatrix;
-    transformedPoint(x: number, y: number): SVGPoint;
+    transformedPoint(x: number, y: number): DOMPoint;
     clearCanvas(): void;
     /**
      * Marks the start of a canvas drag.
      * Should be used on the onmousedown event
      * @param e
      */
-    beginDrag(e: MouseEvent): void;
+    beginPan(e: MouseEvent): void;
     /**
      * Drags the canvas.
      * Should be used on the onmousemove event
      * @param e
      */
-    drag(e: MouseEvent): void;
+    pan(e: MouseEvent): void;
     /**
      * Ends the canvas draw.
      * Should be used on the onmousemove event
      * @param e
      */
-    endDrag(e: MouseEvent): void;
+    endPan(e: MouseEvent): void;
     /**
      * Zooms in or out
      * @param amount Amount in integers to zoom by. Applies zoom on top of previous zoom
