@@ -1,16 +1,16 @@
 {
   "name": "canvas-transform-context",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A wrapper for HTML canvas context for easy zooming/panning/translating",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && uglifyjs --compress --mangle -o ./dist/index.min.js -- ./dist/index.js",
     "test": "jest --env=jsdom"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/poohcom1/canvas-transform"
+    "url": "https://github.com/poohcom1/canvas-transform-context.git"
   },
   "keywords": [
     "canvas",
@@ -20,11 +20,5 @@
     "translate"
   ],
   "author": "poohcom1",
-  "license": "MIT",
-  "devDependencies": {
-    "canvas": "^2.9.3",
-    "jest": "^28.1.2",
-    "jest-environment-jsdom": "^28.1.2",
-    "jsdom": "^20.0.0"
-  }
+  "license": "MIT"
 }

@@ -7,3 +7,8 @@ A canvas context extension based on [this](http://phrogz.net/tmp/canvas_zoom_to_
 ```
 npm i canvas-transform
 ```
+
+## Attributions
+
+Main implementation based on code by phrogz:
+http://phrogz.net/tmp/canvas_zoom_to_cursor.html

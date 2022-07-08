@@ -1,32 +1,28 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.toTransformedContext = exports.isTransformedContext = void 0;
 /**
  * Type guard for transformed context
  * @param ctx
  * @returns
  */
-function isTransformedContext(ctx) {
+export function isTransformedContext(ctx) {
     return ("zoom" in ctx && "beginDrag" in ctx && "drag" in ctx && "endDrag" in ctx);
 }
-exports.isTransformedContext = isTransformedContext;
 /**
  * Extends a canvas context IN PLACE.
  * The return value is for type change typescript usage
  * @param ctx
  * @returns The canvas context.
  */
-function toTransformedContext(ctx) {
+export function toTransformedContext(ctx) {
     if (isTransformedContext(ctx)) {
         console.warn("[canvas-transform] Canvas is already a transformed canvas!");
         return ctx;
     }
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    var xform = svg.createSVGMatrix();
+    let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    let xform = svg.createSVGMatrix();
     ctx.getTransform = function () {
         return xform;
     };
-    var savedTransforms = [];
+    const savedTransforms = [];
     ctx.save = function () {
         savedTransforms.push(xform.translate(0, 0));
         return CanvasRenderingContext2D.prototype.save.call(ctx);
@@ -48,7 +44,7 @@ function toTransformedContext(ctx) {
         return CanvasRenderingContext2D.prototype.translate.call(ctx, dx, dy);
     };
     ctx.transform = function (a, b, c, d, e, f) {
-        var m2 = svg.createSVGMatrix();
+        let m2 = svg.createSVGMatrix();
         m2.a = a;
         m2.b = b;
         m2.c = c;
@@ -73,13 +69,13 @@ function toTransformedContext(ctx) {
         }
     };
     // Extensions
-    var pt = svg.createSVGPoint();
+    let pt = svg.createSVGPoint();
     ctx.transformedPoint = function (x, y) {
         pt.x = x;
         pt.y = y;
         return pt.matrixTransform(xform.inverse());
     };
-    var lastX = 0, lastY = 0, dragged = false, dragStart = undefined;
+    let lastX = 0, lastY = 0, dragged = false, dragStart = undefined;
     ctx.clearCanvas = function () {
         var p1 = this.transformedPoint(0, 0);
         var p2 = this.transformedPoint(this.canvas.width, this.canvas.height);
@@ -96,26 +92,24 @@ function toTransformedContext(ctx) {
         lastY = e.offsetY || e.pageY - ctx.canvas.offsetTop;
         dragged = true;
         if (dragStart) {
-            var pt_1 = this.transformedPoint(lastX, lastY);
-            this.translate(pt_1.x - dragStart.x, pt_1.y - dragStart.y);
+            let pt = this.transformedPoint(lastX, lastY);
+            this.translate(pt.x - dragStart.x, pt.y - dragStart.y);
         }
     };
     ctx.endDrag = function () {
         dragStart = null;
     };
-    var zoom = 0;
-    ctx.zoom = function (amount, zoomFactor, center) {
-        if (zoomFactor === void 0) { zoomFactor = 1.1; }
-        var pt = center
+    let zoom = 0;
+    ctx.zoom = function (amount, zoomFactor = 1.1, center) {
+        let pt = center
             ? this.transform(center.x, center.y)
             : this.transformedPoint(lastX, lastY);
         zoom + amount;
         this.translate(pt.x, pt.y);
-        var factor = Math.pow(zoomFactor, amount);
+        const factor = Math.pow(zoomFactor, amount);
         this.scale(factor, factor);
         this.translate(-pt.x, -pt.y);
         return zoom;
     };
     return ctx;
 }
-exports.toTransformedContext = toTransformedContext;
