@@ -19,7 +19,7 @@
     </ul>
     <canvas style="border: 1px solid black"></canvas>
     <script type="module">
-      import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.0.2/dist/index.min.js";
+      import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.1.0/dist/index.min.js";
 
       var canvas = document.getElementsByTagName("canvas")[0];
       canvas.width = 800;
@@ -41,15 +41,15 @@
 
         // Mouse dragging
         canvas.addEventListener("mousedown", (e) => {
-          ctx.beginDrag(e);
+          ctx.beginPan(e);
           draw(ctx);
         });
         canvas.addEventListener("mousemove", (e) => {
-          ctx.drag(e);
+          ctx.pan(e);
           draw(ctx);
         });
         canvas.addEventListener("mouseup", (e) => {
-          ctx.endDrag(e);
+          ctx.endPan(e);
           draw(ctx);
         });
 
