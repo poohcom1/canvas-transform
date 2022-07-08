@@ -1,5 +1,7 @@
 # Canvas Transform Context
 
+[![npm version](https://badge.fury.io/js/canvas-transform-context.svg)](https://badge.fury.io/js/canvas-transform-context)
+
 A canvas context extension based on [this](http://phrogz.net/tmp/canvas_zoom_to_cursor.html) example by [phrogz](https://stackoverflow.com/users/405017/phrogz). 
 
 Extends the 2d canvas context to support zooming and panning, allowing any canvas to be easily extended with panning and zooming functionalities. Perfect for visual web apps that requires extra canvas functionalities without the hassle of custom canvas implementations.
