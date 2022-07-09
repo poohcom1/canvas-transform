@@ -196,7 +196,7 @@ export function toTransformedContext(
     center?: { x: number; y: number }
   ) {
     let pt = center
-      ? this.transform(center.x, center.y)
+      ? this.transformedPoint(center.x, center.y)
       : this.transformedPoint(lastX, lastY);
 
     zoom + amount;

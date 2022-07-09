@@ -102,7 +102,7 @@ export function toTransformedContext(ctx) {
     let zoom = 0;
     ctx.zoom = function (amount, zoomFactor = 1.1, center) {
         let pt = center
-            ? this.transform(center.x, center.y)
+            ? this.transformedPoint(center.x, center.y)
             : this.transformedPoint(lastX, lastY);
         zoom + amount;
         this.translate(pt.x, pt.y);
