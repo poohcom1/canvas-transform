@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && uglifyjs --compress --mangle -o ./dist/index.min.js -- ./dist/index.js",
-    "deploy": "node deploy-pages.js",
+    "deploy": "gh-pages --dist examples",
     "test": "jest --env=jsdom"
   },
   "repository": {
