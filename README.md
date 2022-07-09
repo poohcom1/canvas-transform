@@ -13,7 +13,7 @@ Extends the 2d canvas context to support zooming and panning, allowing any canva
 
 ### via npm
 ```
-npm i canvas-transform
+npm i canvas-transform-context
 ```
 
 ```javascript
@@ -25,8 +25,6 @@ import { toTransformedContext } from "https://unpkg.com/canvas-transform-context
 ```
 
 ## Usage
-
-// import { toTransformedContext } from "canvas-transform"
 
 ```javascript
 import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.0.2/dist/index.min.js"
