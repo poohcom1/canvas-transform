@@ -1,6 +1,6 @@
 {
   "name": "canvas-transform-context",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A wrapper for HTML canvas context for easy zooming/panning/translating",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

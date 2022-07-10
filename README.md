@@ -17,17 +17,17 @@ npm i canvas-transform-context
 ```
 
 ```javascript
-import { toTransformedContext } from "canvas-transform"
+import { toTransformedContext } from "canvas-transform-context"
 ```
 ### via browser
 ```javascript
-import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.0.2/dist/index.min.js";
+import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@latest/dist/index.min.js";
 ```
 
 ## Usage
 
 ```javascript
-import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@0.0.2/dist/index.min.js"
+import { toTransformedContext } from "https://unpkg.com/canvas-transform-context@latest/dist/index.min.js"
 // import { toTransformedContext } from "canvas-transform"
 
 const canvas = getDocumentById("myCanvas")
