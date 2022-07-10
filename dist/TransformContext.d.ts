@@ -6,10 +6,12 @@ interface Point {
  * Remove wrapped methods to discourage use without the transform tracking
  */
 declare type CanvasContextWithTransform = Omit<CanvasRenderingContext2D, "save" | "restore" | "scale" | "rotate" | "translate" | "setTransform">;
+declare type DrawCallback = (ctx: CanvasContextWithTransform) => void;
 export default class TransformContext {
     private readonly _ctx;
     private _transform;
     private _savedTransforms;
+    private _draw;
     constructor(ctx: CanvasRenderingContext2D);
     get ctx(): CanvasContextWithTransform;
     get transform(): DOMMatrix;
@@ -97,5 +99,12 @@ export default class TransformContext {
      * Clear the canvas given the current transformations
      */
     clearCanvas(): void;
+    private _drawDepth;
+    private draw;
+    /**
+     * Sets a callback to be drawn on actions. Set to undefined to remove draw callback
+     * @param callback
+     */
+    onDraw(callback: DrawCallback | undefined): void;
 }
 export {};

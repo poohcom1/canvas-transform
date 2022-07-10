@@ -11,11 +11,15 @@ type CanvasContextWithTransform = Omit<
   "save" | "restore" | "scale" | "rotate" | "translate" | "setTransform"
 >;
 
+type DrawCallback = (ctx: CanvasContextWithTransform) => void;
+
 export default class TransformContext {
   private readonly _ctx: CanvasRenderingContext2D;
 
   private _transform = new DOMMatrix();
   private _savedTransforms: DOMMatrix[] = [];
+
+  private _draw: DrawCallback | undefined;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this._ctx = ctx;
@@ -119,6 +123,8 @@ export default class TransformContext {
    */
   beginPan(start: Point, transform = true): void {
     this.panStart = transform ? this.transformPoint(start) : start;
+
+    this.draw();
   }
 
   /**
@@ -136,6 +142,7 @@ export default class TransformContext {
         this.panPosition.y - this.panStart.y
       );
     }
+    this.draw();
   }
 
   /**
@@ -143,6 +150,7 @@ export default class TransformContext {
    */
   endPan(): void {
     this.panStart = undefined;
+    this.draw();
   }
 
   /**
@@ -198,6 +206,7 @@ export default class TransformContext {
     this.scale(factor, factor);
     this.translate(-pt.x, -pt.y);
 
+    this.draw();
     return this._zoom;
   }
 
@@ -217,6 +226,7 @@ export default class TransformContext {
    */
   reset() {
     this.setTransform(1, 0, 0, 1, 0, 0);
+    this.draw();
   }
 
   /**
@@ -230,5 +240,29 @@ export default class TransformContext {
     });
 
     this._ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+  }
+
+  // Draw callback
+  private _drawDepth = 0;
+
+  private draw() {
+    if (this._drawDepth > 0) {
+      this._drawDepth = 0;
+      return;
+    }
+
+    if (this._draw) {
+      this._drawDepth++;
+      this._draw(this._ctx);
+    }
+    this._drawDepth = 0;
+  }
+
+  /**
+   * Sets a callback to be drawn on actions. Set to undefined to remove draw callback
+   * @param callback
+   */
+  onDraw(callback: DrawCallback | undefined) {
+    this._draw = callback;
   }
 }

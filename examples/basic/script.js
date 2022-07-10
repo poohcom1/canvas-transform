@@ -1,40 +1,28 @@
-import { TransformContext } from "../dist/bundle.mjs.js";
+import { TransformContext } from "../dist/canvas-transform.js";
 
-var canvas = document.getElementsByTagName("canvas")[0];
+const canvas = document.getElementsByTagName("canvas")[0];
 canvas.width = 800;
 canvas.height = 600;
 
-var ctx = canvas.getContext("2d")
+const ctx = canvas.getContext("2d");
 const transformCtx = new TransformContext(ctx);
 
 const catImage = new Image();
 catImage.src = "../basic/cat.jpg";
 
-function draw() {
+transformCtx.onDraw((ctx) => {
   // Custom canvas clear method
   transformCtx.clearCanvas();
 
   ctx.drawImage(catImage, 0, 0);
-}
-
-draw();
+})
 
 // Mouse dragging
-canvas.addEventListener("mousedown", (e) => {
-  transformCtx.beginMousePan(e);
-  draw();
-});
-canvas.addEventListener("mousemove", (e) => {
-  transformCtx.moveMousePan(e);
-  draw();
-});
-canvas.addEventListener("mouseup", (e) => {
-  transformCtx.endPan(e);
-  draw();
-});
+canvas.addEventListener("mousedown", (e) => transformCtx.beginMousePan(e));
+canvas.addEventListener("mousemove", (e) => transformCtx.moveMousePan(e));
+canvas.addEventListener("mouseup", (e) => transformCtx.endPan(e));
 
 // Wheel zooming
-canvas.addEventListener("wheel", (e) => {
-  transformCtx.mouseZoom(e);
-  draw();
-});
+canvas.addEventListener("wheel", (e) => transformCtx.zoomByMouse(e));
+
+document.getElementById("reset").addEventListener("click", () => transformCtx.reset())

@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && rollup dist/index.js --file dist/bundle.mjs --format esm && uglifyjs dist/bundle.mjs --compress -o dist/bundle.min.js",
+    "build:test": "npm run build && cp dist/bundle.mjs examples/dist/canvas-transform.js",
     "deploy": "gh-pages --dist examples",
     "test": "jest --env=jsdom"
   },

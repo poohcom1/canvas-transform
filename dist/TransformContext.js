@@ -4,6 +4,8 @@ export default class TransformContext {
         this._savedTransforms = [];
         this.panPosition = { x: 0, y: 0 };
         this._zoom = 0;
+        // Draw callback
+        this._drawDepth = 0;
         this._ctx = ctx;
     }
     // Transform methods
@@ -79,6 +81,7 @@ export default class TransformContext {
      */
     beginPan(start, transform = true) {
         this.panStart = transform ? this.transformPoint(start) : start;
+        this.draw();
     }
     /**
      * Pans the canvas to the new coordinates given the starting point in beginPan.
@@ -91,12 +94,14 @@ export default class TransformContext {
         if (this.panStart) {
             this.translate(this.panPosition.x - this.panStart.x, this.panPosition.y - this.panStart.y);
         }
+        this.draw();
     }
     /**
      * Stops a pan
      */
     endPan() {
         this.panStart = undefined;
+        this.draw();
     }
     /**
      * Begins a pan given the current position from the mouse event
@@ -142,6 +147,7 @@ export default class TransformContext {
         const factor = Math.pow(zoomScale, amount);
         this.scale(factor, factor);
         this.translate(-pt.x, -pt.y);
+        this.draw();
         return this._zoom;
     }
     /**
@@ -158,6 +164,7 @@ export default class TransformContext {
      */
     reset() {
         this.setTransform(1, 0, 0, 1, 0, 0);
+        this.draw();
     }
     /**
      * Clear the canvas given the current transformations
@@ -169,5 +176,23 @@ export default class TransformContext {
             y: this._ctx.canvas.height,
         });
         this._ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+    }
+    draw() {
+        if (this._drawDepth > 0) {
+            this._drawDepth = 0;
+            return;
+        }
+        if (this._draw) {
+            this._drawDepth++;
+            this._draw(this._ctx);
+        }
+        this._drawDepth = 0;
+    }
+    /**
+     * Sets a callback to be drawn on actions. Set to undefined to remove draw callback
+     * @param callback
+     */
+    onDraw(callback) {
+        this._draw = callback;
     }
 }
