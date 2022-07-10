@@ -128,7 +128,7 @@ class TransformContext {
     }
     // Transform methods
     get ctx() {
-        return this.ctx;
+        return this._ctx;
     }
     get transform() {
         return this._transform;

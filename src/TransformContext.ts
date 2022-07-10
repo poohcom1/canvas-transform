@@ -27,7 +27,7 @@ export default class TransformContext {
 
   // Transform methods
   get ctx(): CanvasContextWithTransform {
-    return this.ctx;
+    return this._ctx;
   }
 
   get transform(): DOMMatrix {
