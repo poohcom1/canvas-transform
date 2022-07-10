@@ -69,7 +69,7 @@ Batteries-included methods for commonly use actions, included methods that can d
 
 <a name="beginPan"></a>
 
-### beginPan(start, transform)
+### `beginPan(start, transform)`
 Sets the anchor for a panning action
 
 
@@ -81,7 +81,7 @@ Sets the anchor for a panning action
 
 <a name="movePan"></a>
 
-### movePan(current, transform)
+### `movePan(current, transform)`
 Pans the canvas to the new coordinates given the starting point in beginPan.
 Does nothing if beginPan was not called, or if endPan was just called
 
@@ -94,13 +94,13 @@ Does nothing if beginPan was not called, or if endPan was just called
 
 <a name="endPan"></a>
 
-### endPan()
+### `endPan()`
 Stops a pan
 
 
 <a name="beginMousePan"></a>
 
-### beginMousePan(e)
+### `beginMousePan(e)`
 Begins a pan given the current position from the mouse event
 
 
@@ -111,7 +111,7 @@ Begins a pan given the current position from the mouse event
 
 <a name="moveMousePan"></a>
 
-### moveMousePan(e)
+### `moveMousePan(e)`
 Pans the canvas to the new position from the mouse event.
 Does nothing if beginMousePan wasn't called, or if endPan was just called
 
@@ -123,13 +123,13 @@ Does nothing if beginMousePan wasn't called, or if endPan was just called
 
 <a name="endMousePan"></a>
 
-### endMousePan(_e)
+### `endMousePan()`
 Ends a mouse pan
 
 
 <a name="zoomBy"></a>
 
-### zoomBy(amount, zoomScale, center, transform) ⇒
+### `zoomBy(amount, zoomScale, center, transform) ⇒`
 Zoom by a given integer amount
 
 
@@ -144,7 +144,7 @@ Zoom by a given integer amount
 
 <a name="zoomByMouse"></a>
 
-### zoomByMouse(e, zoomScale)
+### `zoomByMouse(e, zoomScale)`
 Zooms via the mouse wheel event
 
 
@@ -156,13 +156,13 @@ Zooms via the mouse wheel event
 
 <a name="reset"></a>
 
-### reset()
+### `reset()`
 Resets all transformations
 
 
 <a name="clearCanvas"></a>
 
-### clearCanvas()
+### `clearCanvas()`
 Clear the canvas given the current transformations
 
 ## Transform Helpers
@@ -170,7 +170,7 @@ Helper methods to deal with coordinate transformations
 
 <a name="transformPoint"></a>
 
-### transformPoint(canvasPoint) ⇒
+### `transformPoint(canvasPoint) ⇒`
 Converts canvas coordinates to transformed coordinates
 
 
@@ -182,7 +182,7 @@ Converts canvas coordinates to transformed coordinates
 
 <a name="mouseToTransformed"></a>
 
-### mouseToTransformed(e) ⇒
+### `mouseToTransformed(e) ⇒`
 Converts a mouse event to the transformed coordinates within the canvas
 
 
@@ -197,7 +197,7 @@ General purpose canvas helpers unrelated to transform
 
 <a name="mouseToCanvas"></a>
 
-### mouseToCanvas(e) ⇒
+### `mouseToCanvas(e) ⇒`
 Converts a mouse event to the correct canvas coordinates
 
 **Returns**: Canvas coordinates  

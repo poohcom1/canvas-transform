@@ -24,6 +24,7 @@
   "license": "MIT",
   "devDependencies": {
     "gh-pages": "^4.0.0",
+    "husky": "^8.0.1",
     "minify": "^9.1.0",
     "rollup": "^2.76.0",
     "terser": "^5.14.1",

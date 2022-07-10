@@ -122,32 +122,35 @@ class TransformContext {
         this._savedTransforms = [];
         this.panPosition = { x: 0, y: 0 };
         this._zoom = 0;
-        this.ctx = ctx;
+        this._ctx = ctx;
     }
     // Transform methods
+    get ctx() {
+        return this.ctx;
+    }
     get transform() {
         return this._transform;
     }
     save() {
         this._savedTransforms.push(this._transform);
-        this.ctx.save();
+        this._ctx.save();
     }
     restore() {
         var _a;
         this._transform = (_a = this._savedTransforms.pop()) !== null && _a !== void 0 ? _a : new DOMMatrix();
-        this.ctx.restore();
+        this._ctx.restore();
     }
     scale(x, y) {
         this._transform = this._transform.scale(x, y);
-        this.ctx.scale(x, y);
+        this._ctx.scale(x, y);
     }
     rotate(radians) {
         this._transform = this._transform.rotate((radians * 180) / Math.PI);
-        this.ctx.rotate(radians);
+        this._ctx.rotate(radians);
     }
     translate(x, y) {
         this._transform = this._transform.translate(x, y);
-        this.ctx.translate(x, y);
+        this._ctx.translate(x, y);
     }
     setTransform(a, b, c, d, e, f) {
         this._transform.a = a;
@@ -156,7 +159,7 @@ class TransformContext {
         this._transform.d = d;
         this._transform.e = e;
         this._transform.f = f;
-        this.ctx.setTransform(a, b, c, d, e, f);
+        this._ctx.setTransform(a, b, c, d, e, f);
     }
     // Basic Utils
     /**
@@ -165,8 +168,8 @@ class TransformContext {
      * @returns Canvas coordinates
      */
     mouseToCanvas(e) {
-        const x = e.offsetX || e.pageX - this.ctx.canvas.offsetLeft;
-        const y = e.offsetY || e.pageY - this.ctx.canvas.offsetTop;
+        const x = e.offsetX || e.pageX - this._ctx.canvas.offsetLeft;
+        const y = e.offsetY || e.pageY - this._ctx.canvas.offsetTop;
         return { x, y };
     }
     // Transform utils
@@ -280,10 +283,10 @@ class TransformContext {
     clearCanvas() {
         const p1 = this.transformPoint({ x: 0, y: 0 });
         const p2 = this.transformPoint({
-            x: this.ctx.canvas.width,
-            y: this.ctx.canvas.height,
+            x: this._ctx.canvas.width,
+            y: this._ctx.canvas.height,
         });
-        this.ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+        this._ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
     }
 }
 

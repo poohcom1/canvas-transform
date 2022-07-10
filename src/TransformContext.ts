@@ -166,7 +166,7 @@ export default class TransformContext {
    * Ends a mouse pan
    * @param _e Unused
    */
-  endMousePan(_e: MouseEvent): void {
+  endMousePan(_e?: MouseEvent): void {
     this.endPan();
   }
 

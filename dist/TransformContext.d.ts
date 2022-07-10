@@ -2,11 +2,16 @@ interface Point {
     x: number;
     y: number;
 }
+/**
+ * Remove wrapped methods to discourage use without the transform tracking
+ */
+declare type CanvasContextWithTransform = Omit<CanvasRenderingContext2D, "save" | "restore" | "scale" | "rotate" | "translate" | "setTransform">;
 export default class TransformContext {
-    readonly ctx: CanvasRenderingContext2D;
+    private readonly _ctx;
     private _transform;
     private _savedTransforms;
     constructor(ctx: CanvasRenderingContext2D);
+    get ctx(): CanvasContextWithTransform;
     get transform(): DOMMatrix;
     save(): void;
     restore(): void;
@@ -66,7 +71,7 @@ export default class TransformContext {
      * Ends a mouse pan
      * @param _e Unused
      */
-    endMousePan(_e: MouseEvent): void;
+    endMousePan(_e?: MouseEvent): void;
     private _zoom;
     get zoom(): number;
     /**
